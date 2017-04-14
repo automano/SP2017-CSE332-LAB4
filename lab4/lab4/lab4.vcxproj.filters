@@ -24,12 +24,36 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NineAlmondsGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MagicSquareGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="lab4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MagicSquareGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NineAlmondsGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
