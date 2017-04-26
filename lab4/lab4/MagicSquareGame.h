@@ -20,6 +20,7 @@ private:
 	int magic_number = 0; // magic number
 public:
 	MagicSquareGame();
+	~MagicSquareGame() {}
 	MagicSquareGame(int board_size);
 	MagicSquareGame(int board_size, int min_start);
 	virtual void print(); // virtual print() method
@@ -30,4 +31,17 @@ public:
 	virtual int turn();   // virtual turn() method
 	bool no_more_move(); // function check if every square contains a piece 
 	bool validmove(unsigned int x_o, unsigned int y_o); // function check if choen square is empty
+	
+	// Adapted from http://en.cppreference.com/w/cpp/language/copy_constructor (3)
+	// prevent the use of copy constructor
+	MagicSquareGame (const MagicSquareGame &) = delete;
+	// Adapted from http://en.cppreference.com/w/cpp/language/copy_assignment (4)
+	// prevent the use of copy assignment operator 
+	MagicSquareGame & MagicSquareGame :: operator= (const MagicSquareGame &) = delete;
+	// Adapted from http://en.cppreference.com/w/cpp/language/move_constructor (3)
+	// prevent the use of move constructor
+	MagicSquareGame (MagicSquareGame &&) = delete;
+	// Adapted from http://en.cppreference.com/w/cpp/language/copy_assignment (3)
+	// prevent the use of move assignment operator
+	MagicSquareGame & MagicSquareGame :: operator= (MagicSquareGame &&) = delete;
 };

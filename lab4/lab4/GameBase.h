@@ -24,6 +24,8 @@ protected:
 	static string gameName; // store current game name for save game file
 	static shared_ptr<GameBase> ptr; // a protected static member variable to your game base class that is a shared smart pointer to the game base class 
 public:
+	GameBase() {}
+	~GameBase() {}
 	virtual void print() = 0;      // pure virtual print() method
 	virtual bool done() = 0;       // pure virtual done() method
 	virtual bool stalemate() = 0;  // pure virtual stalemate() method
@@ -33,4 +35,17 @@ public:
 	int play(); //  play() method
 	static shared_ptr<GameBase> instance();  // a public static instance() method
 	static void objectAddressPtr(int argc, char * argv[]); //a static method returns a pointer to an object of the base class
+
+	// Adapted from http://en.cppreference.com/w/cpp/language/copy_constructor (3)
+	// prevent the use of copy constructor
+	GameBase (const GameBase &) = delete;
+	// Adapted from http://en.cppreference.com/w/cpp/language/copy_assignment (4)
+	// prevent the use of copy assignment operator 
+	GameBase & GameBase :: operator= (const GameBase &) = delete;
+	// Adapted from http://en.cppreference.com/w/cpp/language/move_constructor (3)
+	// prevent the use of move constructor
+	GameBase (GameBase &&) = delete;
+	// Adapted from http://en.cppreference.com/w/cpp/language/copy_assignment (3)
+	// prevent the use of move assignment operator
+	GameBase & GameBase :: operator= (GameBase &&) = delete;
 };

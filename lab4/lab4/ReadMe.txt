@@ -353,3 +353,20 @@ Enter coordinates <x,y> or type <quit> to quit this game.
 NO DATA
 
 // Test #3 
+
+
+// Documenting Copy Control Design Decisions
+
+- I disable copy constructor, move constructor, copy-assignment operator and 
+move-assignment operator in both base class and derived classes by using "=delete"(c++11). 
+
+- Because my implemention really do not need these constructors and opeators. 
+I do not want to give access to user for allocating and messing up game states. 
+This may reinforce the robustness and the independence among various game states. 
+
+- Actually, most classes do not need to copy the constructor nor need to assign 
+an operator. In many cases, a pointer or a reference is actually enough, and there 
+will be better performance. For example, you can pass a pointer, instead of passing in a value, you 
+can also save the object pointer in the STL container, rather than the object itself.
+
+- But, I allow the destructor existence which allow me to release the storage space whenever the game is finished.
