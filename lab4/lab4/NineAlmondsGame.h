@@ -8,6 +8,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip> // std::setw
+#include <fstream>
 using namespace std;
 
 const string ALMOND = "A";

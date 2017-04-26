@@ -15,11 +15,13 @@ const int A_to_a = 32; // 'A'-'a'=32
 */
 int UsageMessage(char * program_name, char * promote)
 {
-	cout << "Usage: " << program_name << " " << promote << endl
-		<< "Prompt: Enter the game name you want to play, like <NineAlmonds> or <MagicSquare>" << endl << endl
-		<< "Extra Credit Usage: " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << endl
-		<< "                    " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << " " << "<start_piece>" << endl;
-	return BAD_ARGUMENT_FORMAT;
+	cout << promote << endl; // Error Message
+	// Usage Message
+	cout << "Usage: " << program_name << " " << "<NineAlmonds>" << endl
+		 << "       " << program_name << " " << "<MagicSquare>" << endl
+		 << "       " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << endl
+		 << "       " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << " " << "<start_piece>" << endl;
+	return SUCCESS;
 }
 
 /**

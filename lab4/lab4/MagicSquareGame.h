@@ -7,6 +7,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip> // std::setw
+#include <fstream>
 using namespace std;
 
 const string BLANK = " ";
@@ -24,6 +25,7 @@ public:
 	virtual void print(); // virtual print() method
 	virtual bool done();  // virtual done() method
 	virtual bool stalemate();  // virtual draw() method
+	virtual int prompt(unsigned int &x, unsigned int &y); // overload pormpt
 	virtual int prompt(unsigned int &x); // an overloaded public virtual (non-static) version of the prompt() method for MagicSquareGame
 	virtual int turn();   // virtual turn() method
 	bool no_more_move(); // function check if every square contains a piece 

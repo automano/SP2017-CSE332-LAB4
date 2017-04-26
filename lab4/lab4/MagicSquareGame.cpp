@@ -56,44 +56,149 @@ ostream & operator<<(ostream &os, const MagicSquareGame &game_board) {
 * representation on the terminal screen when the board is printed and corresponds to a unique integer value between 1 and 9 
 * (for example the first piece would have name "1" and would be printed as "1" and would have value 1 when squares of the board are summed up, etc.).
 */
-MagicSquareGame::MagicSquareGame() { // Defualt Constructor 
-	horizontal_dimension = 3;
-	vertical_dimension = 3;
-	longest_piece_length = 0;
-	available_pieces.resize(horizontal_dimension*vertical_dimension);
-	game_piece.resize(horizontal_dimension*vertical_dimension);
-	// Init game board
-	for (int y = 0; y < vertical_dimension; y++)
+MagicSquareGame::MagicSquareGame() { // Constructor 
+
+	ifstream ifs(gameName + ".txt");
+	if (ifs.is_open()) // game file exists
 	{
-		for (int x = 0; x < horizontal_dimension; x++)
+		string firstline = "";
+		getline(ifs, firstline);
+		if (firstline == "NO DATA")
 		{
-			game_piece[y*horizontal_dimension + x] = BLANK;
-			if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
-				// updated longest_piece_length if needed whenever a piece is added to the board
-				longest_piece_length = game_piece[y*horizontal_dimension + x].length();
+			// new game - default constructor
+			game_turns_count = 0; // set game turns to 0
+			horizontal_dimension = 3;
+			vertical_dimension = 3;
+			longest_piece_length = 0;
+			available_pieces.resize(horizontal_dimension*vertical_dimension);
+			game_piece.resize(horizontal_dimension*vertical_dimension);
+			// Init game board
+			for (int y = 0; y < vertical_dimension; y++)
+			{
+				for (int x = 0; x < horizontal_dimension; x++)
+				{
+					game_piece[y*horizontal_dimension + x] = BLANK;
+					if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
+						// updated longest_piece_length if needed whenever a piece is added to the board
+						longest_piece_length = game_piece[y*horizontal_dimension + x].length();
+				}
+			}
+
+			// Init available pieces value vector
+			for (unsigned int i = 0; i < available_pieces.size(); i++) {
+				available_pieces[i] = i + 1;
+			}
+
+			int total_sum = 0;
+			for (unsigned int i = 0; i < available_pieces.size(); i++)
+			{
+				total_sum += available_pieces[i];
+			}
+
+			//compute the magic number
+			magic_number = total_sum / horizontal_dimension;
+			ifs.close();
+		}
+		else if (firstline == "MagicSquare")
+		{
+			// saved game default constructor
+			// default parameters
+			horizontal_dimension = 3;
+			vertical_dimension = 3;
+
+			// get game turns from game file
+			string secondline = "";
+			getline(ifs, secondline);
+			stringstream ss1;
+			ss1 << secondline;
+			ss1 >> game_turns_count;
+
+			// get longest length game piece
+			string thirdline = "";
+			getline(ifs, thirdline);
+			stringstream ss2;
+			ss2 << thirdline;
+			ss2 >> longest_piece_length;
+
+			// get game pieces from game file
+			game_piece.resize(horizontal_dimension*vertical_dimension);
+			for (int y = 0; y < vertical_dimension; y++)
+			{
+				for (int x = 0; x < horizontal_dimension; x++)
+				{
+					getline(ifs, game_piece[y*horizontal_dimension + x]);
+				}
+			}
+			// get the avaliable piece from gamefile
+			// Adapted from http://stackoverflow.com/questions/43241434/istringstream-from-getline-return-double-for-last-element-in-line
+			string available_pieces_line;
+			int each_available_pieces;
+			while (getline(ifs, available_pieces_line)) {
+				stringstream iss(available_pieces_line);
+				while (iss>> each_available_pieces) {
+					available_pieces.push_back(each_available_pieces);
+				}
+			}
+			ifs.close();
+		}
+		else
+		{
+			throw BAD_FORMAT_LINE;
 		}
 	}
-
-	// Init available pieces value vector
-	for (unsigned int i = 0; i < available_pieces.size(); i++) {
-		available_pieces[i] = i + 1;
-	}
-
-	int total_sum = 0;
-	for (unsigned int i = 0; i < available_pieces.size(); i++)
+	else // game file not exits - Run the game for the first time
 	{
-		total_sum += available_pieces[i];
+		// create the game file
+		ofstream ofs;
+		ofs.open(gameName + ".txt");
+		if (ofs.is_open())
+		{
+			ofs << "NO DATA" << endl; // no state was saved for that game - new game 
+			ofs.close();
+		}
+		else
+		{
+			throw OPEN_FILE_FAILED;
+		}
+		// new game - default constructor
+		game_turns_count = 0; // set game turns to 0
+		horizontal_dimension = 3;
+		vertical_dimension = 3;
+		longest_piece_length = 0;
+		available_pieces.resize(horizontal_dimension*vertical_dimension);
+		game_piece.resize(horizontal_dimension*vertical_dimension);
+		// Init game board
+		for (int y = 0; y < vertical_dimension; y++)
+		{
+			for (int x = 0; x < horizontal_dimension; x++)
+			{
+				game_piece[y*horizontal_dimension + x] = BLANK;
+				if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
+					// updated longest_piece_length if needed whenever a piece is added to the board
+					longest_piece_length = game_piece[y*horizontal_dimension + x].length();
+			}
+		}
+
+		// Init available pieces value vector
+		for (unsigned int i = 0; i < available_pieces.size(); i++) {
+			available_pieces[i] = i + 1;
+		}
+
+		int total_sum = 0;
+		for (unsigned int i = 0; i < available_pieces.size(); i++)
+		{
+			total_sum += available_pieces[i];
+		}
+
+		//compute the magic number
+		magic_number = total_sum / horizontal_dimension;
 	}
-
-	//compute the magic number
-	magic_number = total_sum / horizontal_dimension;
-
-
 }
 
 // Extra Credit
 MagicSquareGame::MagicSquareGame(int board_size) {
 	// Generalize game board depends on commend line input --- an n by n square
+	game_turns_count = 0; // set game turns to 0
 	horizontal_dimension = board_size;
 	vertical_dimension = board_size;
 	longest_piece_length = 0;
@@ -124,12 +229,11 @@ MagicSquareGame::MagicSquareGame(int board_size) {
 
 	//compute the magic number
 	magic_number = total_sum / horizontal_dimension;
-
-
 }
 
 MagicSquareGame::MagicSquareGame(int board_size, int min_start) {
 	// Generalize game board depends on commend line input --- an n by n square
+	game_turns_count = 0; // set game turns to 0
 	horizontal_dimension = board_size;
 	vertical_dimension = board_size;
 	longest_piece_length = 0;
@@ -162,9 +266,6 @@ MagicSquareGame::MagicSquareGame(int board_size, int min_start) {
 
 	//compute the magic number
 	magic_number = total_sum / horizontal_dimension;
-
-
-
 }
 
 
@@ -261,6 +362,109 @@ bool MagicSquareGame::stalemate() {
 }
 
 /*
+* Define prompt() method for MagicSquare Game
+* Adapted from lab3
+* Modify your Magic Square and Nine Almonds games so that if the player chooses to quit, the game asks them whether or not they want to save the current game. If the player answers yes, the game should use an ofstream to open up a file that has the same name as the game, output a line with the name of the game as the first line of the file, then output the current state of the game (in a manner that the program can read back in to resume the game - see next), and then close the file before the program ends. How you choose to format the files is up to you, but you should please document your aproach in your ReadMe.txt file.
+If the player answers no, the game should again open up a file with the same name as the game, but then output something specific that cannot be confused with a valid game state (say, a single blank line, or something like "NO DATA") to indicate that no state was saved for that game, and then close the file before the program ends.
+*/
+int MagicSquareGame::prompt(unsigned int &x, unsigned int &y) {
+	cout << "Enter coordinates <x,y> or type <quit> to quit this game." << endl;
+	int output;
+	string coordinates;
+	LowerCase(coordinates);
+	while (cin >> coordinates) {
+		if (!coordinates.compare("quit"))  // user type <quit>
+		{
+			// save game prompt
+			cout << "Would you like to save the current game ? (YyNn)" << endl;
+			string in = "";
+			cin >> in;
+			LowerCase(in);
+			while (in != "y" && in != "n") {
+				cout << "Invalid input, try y or n!" << endl;
+				cin >> in;
+				LowerCase(in);
+			}
+			if (in == "y") { // user want to save the current game 
+							 // Adapted from http://www.cplusplus.com/reference/fstream/ofstream/is_open/
+							 // Whenever a game is completed it should also overwrite the game's file to indicate that the next time the game is played it should start at the beginning.
+				ofstream ofs;
+				ofs.open(gameName + ".txt");
+				if (ofs.is_open())
+				{
+					// write data for Ninealmonds Game
+					ofs << gameName << endl; // game name 
+					ofs << game_turns_count << endl; // how many turns
+					ofs << longest_piece_length << endl; // store the longest piece length
+					for (int y = 0; y < vertical_dimension; y++)
+					{
+						for (int x = 0; x < horizontal_dimension; x++)
+						{
+							ofs << game_piece[y*horizontal_dimension + x] << endl;
+						}
+					}
+
+					for (unsigned int x = 0; x < available_pieces.size(); x++)
+					{
+						ofs << available_pieces[x] << endl;
+					}
+
+					cout << "Game Saved!" << endl;
+					ofs.close();
+				}
+				else
+				{
+					throw OPEN_FILE_FAILED;
+				}
+			}
+			if (in == "n") { // user don't want to save the current game 
+							 // Adapted from http://www.cplusplus.com/reference/fstream/ofstream/is_open/
+							 // Whenever a game is completed it should also overwrite the game's file to indicate that the next time the game is played it should start at the beginning.
+				ofstream ofs;
+				ofs.open(gameName + ".txt");
+				if (ofs.is_open())
+				{
+					ofs << "NO DATA" << endl; // no state was saved for that game - new game 
+					ofs.close();
+				}
+				else
+				{
+					throw OPEN_FILE_FAILED;
+				}
+				// end 
+			}
+
+			output = PLAYER_QUIT;
+			break;
+		}
+		else // user type <x,y>
+		{
+			for (unsigned int i = 0; i <= coordinates.size(); i++)
+			{
+				if (coordinates[i] == ',')
+				{
+					coordinates[i] = ' ';
+				}
+			}
+			stringstream ss;
+			ss << coordinates;
+			if (ss >> x >> y)
+			{
+				if ((0 <= int(x) && int(x) < horizontal_dimension) && (0 <= int(y) && int(y) < vertical_dimension))  //check the input move is on the inner nine squares of the board
+				{
+					output = SUCCESS;
+					break;
+				}
+			}
+		}
+		// other invalid user input
+		cout << "Invalid user input." << endl;
+		cout << "Enter coordinates <x,y> or type <quit> to quit this game." << endl;
+	}
+	return output;
+}
+
+/*
 * Provide an overloaded public virtual (non-static) version of the prompt() method for MagicSquare Game
 * Takes a single reference to an unsigned integer and has a void return type. The method
 * should (repeatedly if necessary) prompt the user to type a line that is either "quit" or the
@@ -277,6 +481,66 @@ int MagicSquareGame::prompt(unsigned int &x) {
 	while (cin >> input) {
 		if (!input.compare("quit"))  // user type <quit>
 		{
+			// save game prompt
+			cout << "Would you like to save the current game ? (YyNn)" << endl;
+			string in = "";
+			cin >> in;
+			LowerCase(in);
+			while (in != "y" && in != "n") {
+				cout << "Invalid input, try y or n!" << endl;
+				cin >> in;
+				LowerCase(in);
+			}
+			if (in == "y") { // user want to save the current game 
+				// Adapted from http://www.cplusplus.com/reference/fstream/ofstream/is_open/
+				// Whenever a game is completed it should also overwrite the game's file to indicate that the next time the game is played it should start at the beginning.
+				ofstream ofs;
+				ofs.open(gameName + ".txt");
+				if (ofs.is_open())
+				{
+					// write data for MagicSquare Game
+					ofs << gameName << endl; // game name 
+					ofs << game_turns_count << endl; // how many turns
+					ofs << longest_piece_length << endl; // store the longest piece length
+					for (int y = 0; y < vertical_dimension; y++)
+					{
+						for (int x = 0; x < horizontal_dimension; x++)
+						{
+							ofs << game_piece[y*horizontal_dimension + x] << endl;
+						}
+					}
+
+					for (unsigned int x = 0; x < available_pieces.size(); x++)
+					{
+						ofs << available_pieces[x] << endl;
+					}
+
+					cout << "Game Saved!" << endl;
+					ofs.close();
+
+				}
+				else
+				{
+					throw OPEN_FILE_FAILED;
+				}
+			}
+			if (in == "n") { // user don't want to save the current game 
+							 // Adapted from http://www.cplusplus.com/reference/fstream/ofstream/is_open/
+							 // Whenever a game is completed it should also overwrite the game's file to indicate that the next time the game is played it should start at the beginning.
+				ofstream ofs;
+				ofs.open(gameName + ".txt");
+				if (ofs.is_open())
+				{
+					ofs << "NO DATA" << endl; // no state was saved for that game - new game 
+					ofs.close();
+				}
+				else
+				{
+					throw OPEN_FILE_FAILED;
+				}
+				// end 
+			}
+
 			output = PLAYER_QUIT;
 			break;
 		}
@@ -318,7 +582,7 @@ int MagicSquareGame::turn() {
 	unsigned int y_o = 0;
 	unsigned int piece = 0;
 	cout << "----- Choose square -----" << endl;
-	if ((this->GameBase::prompt(x_o, y_o) == SUCCESS))
+	if ((this->prompt(x_o, y_o) == SUCCESS))
 	{
 		if (this->validmove(x_o, y_o))
 		{

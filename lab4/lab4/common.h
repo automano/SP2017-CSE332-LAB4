@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+
 using namespace std;
 
 #define ARGUMENT_0 2
@@ -28,10 +29,18 @@ enum ProgramStatus
 {
 	SUCCESS,
 	STALEMATE,
-	BAD_ARGUMENT_FORMAT,
+	WRONG_GAME_NAME,
+	INVALID_BOARD_SIZE,
+	INVALID_LOWEST_VALUE_PIECE,
 	PLAYER_QUIT,
 	INVALID_USER_INPUT,
-	INVALID_MOVE
+	INVALID_MOVE,
+	NULLPTR,
+	NOT_NULL_PTR,
+	BAD_ALLOC,
+	WRONG_NUMBER_ARGUMENTS,
+	OPEN_FILE_FAILED,
+	BAD_FORMAT_LINE
 };
 
 int UsageMessage(char * program_name, char * promote);

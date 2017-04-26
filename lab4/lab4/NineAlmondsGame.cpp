@@ -45,31 +45,121 @@ ostream & operator<<(ostream &os, const NineAlmondsGame &game_board) {
 
 /* 
  * Initialize the game board
- * - The game board is five squares wide and five squares tall. The lower left square has coordinate 0,0 (as in the previous lab) 
- * and the upper right square has coordinate 4,4.
- * - Each piece in this game is a brown almond, and should be represented by an 'A' character on the terminal screen when the board is printed.
- * - When the game begins, the inner nine squares of the board (coordinates 1,1 through 3,3) should all have brown almonds on them, and the outer
- * sixteen squares of the board (each of which has a 0 or 4 in the horizontal or vertical portion of their coordinate) should be empty.
+ * The game board is five squares wide and five squares tall. The lower left square has coordinate 0,0 (as in the previous lab) 
+   and the upper right square has coordinate 4,4.
+ * Each piece in this game is a brown almond, and should be represented by an 'A' character on the terminal screen when the board is printed.
+ * When the game begins, the inner nine squares of the board (coordinates 1,1 through 3,3) should all have brown almonds on them, and the outer
+   sixteen squares of the board (each of which has a 0 or 4 in the horizontal or vertical portion of their coordinate) should be empty.
+ * Modify the constructors of your Magic Square and Nine Almonds games so that they use an ifstream to open up a file that has the same name 
+ as the game, and determine whether or not the file contains valid state of a previously saved version of that particular game. If so, the 
+ constructor should use that data to initialize the game object into that saved state. If not, the constructor should initialize the object 
+ into the initial game state it had when it first started up, as in the previous lab assignments.
  */
-NineAlmondsGame::NineAlmondsGame() {
-	horizontal_dimension = 5;
-	vertical_dimension = 5;
-	longest_piece_length = 0;
-	game_piece.resize(horizontal_dimension*vertical_dimension);
-	for (int y = 0; y < vertical_dimension; y++)
-	{
-		for (int x = 0; x < horizontal_dimension; x++)
-		{
-			if (x == 0 || x == horizontal_dimension - 1 || y == 0 || y == vertical_dimension - 1)
-				// the inner nine squares of the board should all have brown almonds on them
-				game_piece[y*horizontal_dimension + x] = EMPTY;
-			else
-				// the outer sixteen squares of the board should be empty.
-				game_piece[y*horizontal_dimension + x] = ALMOND;
+NineAlmondsGame::NineAlmondsGame() { // constructor
 
-			if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
-				// updated longest_piece_length if needed whenever a piece is added to the board
-				longest_piece_length = game_piece[y*horizontal_dimension + x].length();
+	ifstream ifs(gameName + ".txt");
+	if (ifs.is_open()) // game file exists
+	{
+		string firstline = "";
+		getline(ifs, firstline);
+		if (firstline == "NO DATA")
+		{
+			// new game default constructor
+			game_turns_count = 0;
+			horizontal_dimension = 5;
+			vertical_dimension = 5;
+			longest_piece_length = 0;
+			game_piece.resize(horizontal_dimension*vertical_dimension);
+			for (int y = 0; y < vertical_dimension; y++)
+			{
+				for (int x = 0; x < horizontal_dimension; x++)
+				{
+					if (x == 0 || x == horizontal_dimension - 1 || y == 0 || y == vertical_dimension - 1)
+						// the inner nine squares of the board should all have brown almonds on them
+						game_piece[y*horizontal_dimension + x] = EMPTY;
+					else
+						// the outer sixteen squares of the board should be empty.
+						game_piece[y*horizontal_dimension + x] = ALMOND;
+
+					if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
+						// updated longest_piece_length if needed whenever a piece is added to the board
+						longest_piece_length = game_piece[y*horizontal_dimension + x].length();
+				}
+			}
+			ifs.close();
+		}
+		else if (firstline == "NineAlmonds")
+		{
+			// saved game default constructor
+			// default parameters
+			horizontal_dimension = 5;
+			vertical_dimension = 5;
+
+			// get game turns from game file
+			string secondline = "";
+			getline(ifs, secondline);
+			stringstream ss1;
+			ss1 << secondline;
+			ss1 >> game_turns_count;
+
+			// get longest length game piece
+			string thirdline = "";
+			getline(ifs, thirdline);
+			stringstream ss2;
+			ss2 << thirdline;
+			ss2 >> longest_piece_length;
+
+			// get game pieces from game file
+			game_piece.resize(horizontal_dimension*vertical_dimension);
+			for (int y = 0; y < vertical_dimension; y++)
+			{
+				for (int x = 0; x < horizontal_dimension; x++)
+				{
+					getline(ifs, game_piece[y*horizontal_dimension + x]);
+				}
+			}
+			ifs.close();
+		}
+		else
+		{
+			throw BAD_FORMAT_LINE;
+		}	
+	}
+	else // game file not exits - Run the game for the first time
+	{
+		// create the game file
+		ofstream ofs;
+		ofs.open(gameName + ".txt");
+		if (ofs.is_open())
+		{
+			ofs << "NO DATA" << endl; // no state was saved for that game - new game 
+			ofs.close();
+		}
+		else
+		{
+			throw OPEN_FILE_FAILED;
+		}
+		// new game default constructor
+		game_turns_count = 0;
+		horizontal_dimension = 5;
+		vertical_dimension = 5;
+		longest_piece_length = 0;
+		game_piece.resize(horizontal_dimension*vertical_dimension);
+		for (int y = 0; y < vertical_dimension; y++)
+		{
+			for (int x = 0; x < horizontal_dimension; x++)
+			{
+				if (x == 0 || x == horizontal_dimension - 1 || y == 0 || y == vertical_dimension - 1)
+					// the inner nine squares of the board should all have brown almonds on them
+					game_piece[y*horizontal_dimension + x] = EMPTY;
+				else
+					// the outer sixteen squares of the board should be empty.
+					game_piece[y*horizontal_dimension + x] = ALMOND;
+
+				if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
+					// updated longest_piece_length if needed whenever a piece is added to the board
+					longest_piece_length = game_piece[y*horizontal_dimension + x].length();
+			}
 		}
 	}
 }
