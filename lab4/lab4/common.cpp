@@ -17,10 +17,11 @@ int UsageMessage(char * program_name, char * promote)
 {
 	cout << promote << endl; // Error Message
 	// Usage Message
-	cout << "Usage: " << program_name << " " << "<NineAlmonds>" << endl
-		 << "       " << program_name << " " << "<MagicSquare>" << endl
-		 << "       " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << endl
-		 << "       " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << " " << "<start_piece>" << endl;
+	cout << "Usage:" << program_name << " " << "<NineAlmonds>" << endl
+		 << "      " << program_name << " " << "<MagicSquare>" << endl
+		 << "      " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << endl
+		 << "      " << program_name << " " << "<MagicSquare>" << " " << "<arbitrary_board_size>" << " " << "<start_piece>" << endl
+		 << "      " << program_name << " " << "<Reversi>" << " " << "<first_player_name>" << " " << "<second_player_name>" << endl;
 	return SUCCESS;
 }
 

@@ -10,8 +10,6 @@
 #include <fstream>
 using namespace std;
 
-const string BLANK = " ";
-
 // Derived class MagicSquareGame from base class GameBase
 class MagicSquareGame :public GameBase {
 	friend ostream & operator<<(ostream &os, const MagicSquareGame &game_board); // the ostream insertion operator

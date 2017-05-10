@@ -11,8 +11,7 @@
 #include <fstream>
 using namespace std;
 
-const string ALMOND = "A";
-const string EMPTY = " ";
+const string ALMOND = "A"; // Almond game piece
 
 // Derived class NineAlmondsGame from base class GameBase
 class NineAlmondsGame :public GameBase {

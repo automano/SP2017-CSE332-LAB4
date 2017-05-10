@@ -10,7 +10,7 @@
 #include "GameBase.h"
 #include "NineAlmondsGame.h"
 #include "MagicSquareGame.h"
-
+#include "ReversiGame.h"
 
 int main(int argc, char*argv[])
 {
@@ -31,7 +31,7 @@ int main(int argc, char*argv[])
 		//Exceptions involving badly formed command lines also should cause a call to the usage function as in previous labs. 
 		if (error == WRONG_GAME_NAME)
 		{
-			UsageMessage(argv[PROGRAM_NAME], "Error: Wrong game name input!");
+			UsageMessage(argv[PROGRAM_NAME], "Error: wrong game name input!");
 			return error;
 		}
 		else if (error == INVALID_BOARD_SIZE)

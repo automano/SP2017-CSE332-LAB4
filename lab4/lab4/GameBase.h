@@ -11,6 +11,8 @@
 #include <fstream>
 using namespace std;
 
+const string EMPTY = " "; // empty game piece
+
 /*
  * A base class that contains protected member variables that are common to multiple games 
  */

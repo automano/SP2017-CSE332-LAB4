@@ -77,7 +77,7 @@ MagicSquareGame::MagicSquareGame() { // Constructor
 			{
 				for (int x = 0; x < horizontal_dimension; x++)
 				{
-					game_piece[y*horizontal_dimension + x] = BLANK;
+					game_piece[y*horizontal_dimension + x] = EMPTY;
 					if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
 						// updated longest_piece_length if needed whenever a piece is added to the board
 						longest_piece_length = game_piece[y*horizontal_dimension + x].length();
@@ -172,7 +172,7 @@ MagicSquareGame::MagicSquareGame() { // Constructor
 		{
 			for (int x = 0; x < horizontal_dimension; x++)
 			{
-				game_piece[y*horizontal_dimension + x] = BLANK;
+				game_piece[y*horizontal_dimension + x] = EMPTY;
 				if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
 					// updated longest_piece_length if needed whenever a piece is added to the board
 					longest_piece_length = game_piece[y*horizontal_dimension + x].length();
@@ -209,7 +209,7 @@ MagicSquareGame::MagicSquareGame(int board_size) {
 	{
 		for (int x = 0; x < horizontal_dimension; x++)
 		{
-			game_piece[y*horizontal_dimension + x] = BLANK;
+			game_piece[y*horizontal_dimension + x] = EMPTY;
 			if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
 				// updated longest_piece_length if needed whenever a piece is added to the board
 				longest_piece_length = game_piece[y*horizontal_dimension + x].length();
@@ -245,7 +245,7 @@ MagicSquareGame::MagicSquareGame(int board_size, int min_start) {
 	{
 		for (int x = 0; x < horizontal_dimension; x++)
 		{
-			game_piece[y*horizontal_dimension + x] = BLANK;
+			game_piece[y*horizontal_dimension + x] = EMPTY;
 			if (game_piece[y*horizontal_dimension + x].length() > longest_piece_length)
 				// updated longest_piece_length if needed whenever a piece is added to the board
 				longest_piece_length = game_piece[y*horizontal_dimension + x].length();
@@ -632,7 +632,7 @@ bool MagicSquareGame::no_more_move() {
 	{
 		for (int x = 0; x < horizontal_dimension; x++)
 		{
-			if (game_piece[y*horizontal_dimension + x] == BLANK)
+			if (game_piece[y*horizontal_dimension + x] == EMPTY)
 				return false;
 		}
 	}
@@ -641,7 +641,7 @@ bool MagicSquareGame::no_more_move() {
 
 bool MagicSquareGame::validmove(unsigned int x_o, unsigned int y_o)
 {
-	if (game_piece[y_o*horizontal_dimension + x_o]==BLANK)
+	if (game_piece[y_o*horizontal_dimension + x_o] == EMPTY)
 		return true;
 	else
 		return false;

@@ -40,7 +40,8 @@ enum ProgramStatus
 	BAD_ALLOC,
 	WRONG_NUMBER_ARGUMENTS,
 	OPEN_FILE_FAILED,
-	BAD_FORMAT_LINE
+	BAD_FORMAT_LINE,
+	SKIP_CURRENT_TURN
 };
 
 int UsageMessage(char * program_name, char * promote);

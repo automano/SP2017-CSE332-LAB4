@@ -8,6 +8,7 @@
 #include "common.h"
 #include "NineAlmondsGame.h"
 #include "MagicSquareGame.h"
+#include "ReversiGame.h"
 
 // Init the game name
 string GameBase::gameName = "";
@@ -18,7 +19,7 @@ string GameBase::gameName = "";
 shared_ptr<GameBase> GameBase::ptr = nullptr;
 
 /*
- * Define prompt() method for NineAlmonds Game
+ * Define prompt() method for NineAlmonds Game and Reversi Game
  * Adapted from lab2
  * Modify your Magic Square and Nine Almonds games so that if the player chooses to quit, the game asks them whether or not they want to save the current game. If the player answers yes, the game should use an ofstream to open up a file that has the same name as the game, output a line with the name of the game as the first line of the file, then output the current state of the game (in a manner that the program can read back in to resume the game - see next), and then close the file before the program ends. How you choose to format the files is up to you, but you should please document your aproach in your ReadMe.txt file.
 If the player answers no, the game should again open up a file with the same name as the game, but then output something specific that cannot be confused with a valid game state (say, a single blank line, or something like "NO DATA") to indicate that no state was saved for that game, and then close the file before the program ends.
@@ -32,7 +33,7 @@ int GameBase::prompt(unsigned int &x, unsigned int &y){
 		if (!coordinates.compare("quit"))  // user type <quit>
 		{
 			// save game prompt
-			cout << "Would you like to save the current game ? (YyNn)" << endl;
+			cout << "Would you like to save the current game? (YyNn)" << endl;
 			string in = "";
 			cin >> in;
 			LowerCase(in);
@@ -60,7 +61,7 @@ int GameBase::prompt(unsigned int &x, unsigned int &y){
 						}
 					}
 
-					cout << "Game Saved!" << endl;
+					cout << "Current game board saved!" << endl;
 					ofs.close();
 				}
 				else
@@ -138,17 +139,28 @@ int GameBase::play() {
 		method_turn_return = this->turn();
 		if (method_turn_return == PLAYER_QUIT) { // user quits
 			cout << "Player quit game!" << endl;
-			cout << "Total turns: " << game_turns_count << "." << endl;
+			cout << "Total turns: " << game_turns_count+1 << "." << endl;
 			return PLAYER_QUIT;
 		}
 		else if (method_turn_return == SUCCESS) {
 			game_turns_count++;
 		}
+		else if (method_turn_return == SKIP_CURRENT_TURN) {
+			// skip this turn - begin new turn
+			game_turns_count++;
+		}
 	}
 	if (this->done()) // done() method returns true
 	{
-		cout << "Congratulations! You win!" << endl;
-		cout << "Total turns: " << game_turns_count << "." << endl;
+		if (gameName == "Reversi") // multi-player win
+		{
+			// info already print do nothing here
+		}
+		else
+		{
+			cout << "Congratulations! You win!" << endl;
+			cout << "Total turns: " << game_turns_count << "." << endl;
+		}
 		// Adapted from http://www.cplusplus.com/reference/fstream/ofstream/is_open/
 		// Whenever a game is completed it should also overwrite the game's file to indicate that the next time the game is played it should start at the beginning.
 		ofstream ofs;
@@ -167,7 +179,7 @@ int GameBase::play() {
 	}
 	else // stalemate() method returns true
 	{
-		cout << "Sorry! No more valid moves!" << endl;
+		cout << "Sorry! No more valid moves! Draw!" << endl;
 		cout << "Total turns: " << game_turns_count << "." << endl;
 		// Adapted from http://www.cplusplus.com/reference/fstream/ofstream/is_open/
 		// Whenever a game is stalemate it should also overwrite the game's file to indicate that the next time the game is played it should start at the beginning.
@@ -235,6 +247,10 @@ void GameBase::objectAddressPtr(int argc, char *argv[]) {
 				gameName = argv[GAME_NAME];
 				ptr = make_shared<MagicSquareGame>();
 	 		}
+			else if (!strcmp(argv[GAME_NAME], "Reversi"))
+			{
+				throw WRONG_NUMBER_ARGUMENTS;
+			}
 			else
 			{
 				throw WRONG_GAME_NAME;
@@ -255,6 +271,10 @@ void GameBase::objectAddressPtr(int argc, char *argv[]) {
 				{
 					throw INVALID_BOARD_SIZE;
 				}
+			}
+			else if (!strcmp(argv[GAME_NAME], "Reversi"))
+			{
+				throw WRONG_NUMBER_ARGUMENTS;
 			}
 			else
 			{
@@ -282,6 +302,12 @@ void GameBase::objectAddressPtr(int argc, char *argv[]) {
 				 {
 					 throw INVALID_BOARD_SIZE;
 				 }
+			 }
+			 else if (!strcmp(argv[GAME_NAME], "Reversi"))
+			 {
+				 gameName = argv[GAME_NAME];
+				 // Here BOARD_SIE is the first player name and LOWEST_VALUE_PIECE is the second player name
+				 ptr = (make_shared<ReversiGame>(string(argv[BOARD_SIZE]), string(argv[LOWEST_VALUE_PIECE]))); 
 			 }
 			 else
 			 {
